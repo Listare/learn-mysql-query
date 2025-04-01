@@ -1,0 +1,22 @@
+{
+    "name": "mysql-query-tool",
+    "version": "1.0.0",
+    "description": "",
+    "main": "main.js",
+    "devDependencies": {
+        "electron": "^35.1.2",
+        "electron-packager": "^17.1.2"
+    },
+    "scripts": {
+        "start": "electron .",
+        "package": "npx electron-packager . --overwrite --platform=win32 --arch=x64 --out=release --ignore=\"mysql-data\""
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "codemirror": "^5.65.19",
+        "dockerode": "^4.0.5",
+        "mysql2": "^3.14.0",
+        "yargs": "^17.7.2"
+    }
+}
