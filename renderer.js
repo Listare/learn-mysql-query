@@ -1,5 +1,5 @@
 class ExplainAnalyzeTree {
-  constructor(value, cost, rows, actualTime1, actualTime2, actualRows, loops) {
+  constructor(value, cost = null, rows = null, actualTime1 = null, actualTime2 = null, actualRows = null, loops = null) {
     this.value = value
     this.children = []
     this.cost = cost
@@ -13,23 +13,47 @@ class ExplainAnalyzeTree {
 
 function parseExplainAnalyze(result) {
   const lines = result[0]['EXPLAIN'].split('\n')
-  const root = new ExplainAnalyzeTree('Query Plan', null, null, null, null, null, null)
+  const root = new ExplainAnalyzeTree('Query Plan')
   const stack = []
 
   lines.forEach(line => {
     if (line.trim() === '') return // Skip empty lines
     const indent = line.search(/\S/)
-    const parts = line.trim().match(/-> (.*?)  \(cost=(.*?) rows=(.*?)\) \(actual time=(.*?)\.\.(.*?) rows=(.*?) loops=(.*?)\)/)
-    const node = parts ? new ExplainAnalyzeTree(
-      parts[1],
-      parseFloat(parts[2]),
-      parseFloat(parts[3]),
-      parseFloat(parts[4]),
-      parseFloat(parts[5]),
-      parseFloat(parts[6]),
-      parseFloat(parts[7])
-    ) : new ExplainAnalyzeTree(line.trim(), null, null, null, null, null, null)
-
+    var trimmed = line.trim()
+    var parts = trimmed.match(/-> (.*?)  \(cost=(.*?) rows=(.*?)\) \(actual time=(.*?)\.\.(.*?) rows=(.*?) loops=(.*?)\)/)
+    var node = null
+    if (parts) {
+      node = new ExplainAnalyzeTree(
+        parts[1],
+        parseFloat(parts[2]),
+        parseFloat(parts[3]),
+        parseFloat(parts[4]),
+        parseFloat(parts[5]),
+        parseFloat(parts[6]),
+        parseFloat(parts[7])
+      )
+    } else {
+      parts = trimmed.match(/-> (.*?)  \(actual time=(.*?)\.\.(.*?) rows=(.*?) loops=(.*?)\)/)
+      if (parts) {
+        node = new ExplainAnalyzeTree(
+          parts[1],
+          null,
+          null,
+          parseFloat(parts[2]),
+          parseFloat(parts[3]),
+          parseFloat(parts[4]),
+          parseFloat(parts[5])
+        )
+      } else {
+        parts = trimmed.match(/-> ([^(]*)/)
+        if (parts) {
+          node = new ExplainAnalyzeTree(parts[1])
+        } else {
+          return
+        }
+      }
+    }
+    
     while (stack.length > 0 && stack[stack.length - 1].indent >= indent) {
       stack.pop()
     }
