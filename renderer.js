@@ -159,6 +159,32 @@ function renderTree(node, indent) {
   }
 }
 
+function splitSqls(sql) {
+  // 根据括号来判断SQL语句的结束，如果括号完全匹配且一行结束，则认为是一条SQL语句
+  const sqls = []
+  var currentSql = []
+  var bracketCount = 0
+  for (const line of sql.split('\n')) {
+    currentSql.push(line)
+    for (const char of line) {
+      if (char === '(') {
+        bracketCount++
+      } else if (char === ')') {
+        bracketCount--
+      }
+    }
+    if (bracketCount === 0 || line.trim().endsWith(';')) {
+      // 如果当前行结束了SQL语句，或者括号完全匹配，则认为是一条SQL语句
+      sqls.push(currentSql.join('\n'))
+      currentSql = []
+    }
+  }
+  if (currentSql.length > 0) {
+    sqls.push(currentSql.join('\n'))
+  }
+  return sqls
+}
+
 executeBtn.addEventListener('click', async () => {
   const initSql = initSqlEditor.getValue()
   // initSql每一行视作一条SQL语句
@@ -168,7 +194,7 @@ executeBtn.addEventListener('click', async () => {
   try {
     clearResult()
 
-    const result = await executeSQL(initSql.split('\n'), querySql)
+    const result = await executeSQL(splitSqls(initSql), querySql)
 
     executionPlanPre.innerHTML = jsonToTable(result.executionPlan)
     queryResultPre.innerHTML = jsonToTable(result.queryResult)
