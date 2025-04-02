@@ -165,18 +165,23 @@ function splitSqls(sql) {
   var currentSql = []
   var bracketCount = 0
   for (const line of sql.split('\n')) {
-    currentSql.push(line)
-    for (const char of line) {
+    var trimmed = line.trim()
+    if (trimmed === '') {
+      continue;
+    }
+    currentSql.push(trimmed)
+    for (const char of trimmed) {
       if (char === '(') {
         bracketCount++
       } else if (char === ')') {
         bracketCount--
       }
     }
-    if (bracketCount === 0 || line.trim().endsWith(';')) {
+    if (bracketCount === 0 || trimmed.endsWith(';')) {
       // 如果当前行结束了SQL语句，或者括号完全匹配，则认为是一条SQL语句
       sqls.push(currentSql.join('\n'))
       currentSql = []
+      bracketCount = 0
     }
   }
   if (currentSql.length > 0) {
