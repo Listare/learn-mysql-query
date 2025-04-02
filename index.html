@@ -10,17 +10,21 @@
         .output { display: flex; margin-top: 20px; }
         .output > div { flex: 1; margin: 0 10px; }
         pre { background: #f4f4f4; padding: 10px; border: 1px solid #ddd; }
+        .CodeMirror {
+            overflow-x: auto;
+            height: auto;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>MySQL Query Tool</h1>
         <div style="display: flex; margin-bottom: 10px;">
-            <div style="flex: 1; margin-right: 10px;">
+            <div style="flex: 0 0 50%; margin-right: 10px; box-sizing: border-box; overflow: hidden; min-width: 0;">
                 <label for="initSqlEditor" style="display: block; margin-bottom: 5px;">初始化SQL</label>
                 <textarea id="initSqlEditor" style="width: 100%; height: 100px; border: 1px solid #ccc; padding: 5px;"></textarea>
             </div>
-            <div style="flex: 1; margin-left: 10px;">
+            <div style="flex: 0 0 50%; margin-left: 10px; box-sizing: border-box; overflow: hidden; min-width: 0;">
                 <label for="querySqlEditor" style="display: block; margin-bottom: 5px;">查询SQL</label>
                 <textarea id="querySqlEditor" style="width: 100%; height: 100px; border: 1px solid #ccc; padding: 5px;"></textarea>
             </div>
@@ -60,13 +64,17 @@
         const initSqlEditor = CodeMirror.fromTextArea(document.getElementById('initSqlEditor'), {
             mode: 'text/x-mysql',
             matchBrackets: true,
-            lineNumbers: true
+            lineNumbers: true,
+            indentUnit: 2,
+            tabSize: 2
         })
 
         const querySqlEditor = CodeMirror.fromTextArea(document.getElementById('querySqlEditor'), {
             mode: 'text/x-mysql',
             matchBrackets: true,
-            lineNumbers: true
+            lineNumbers: true,
+            indentUnit: 2,
+            tabSize: 2
         })
     </script>
     <script src="renderer.js"></script>
